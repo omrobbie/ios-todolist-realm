@@ -18,8 +18,29 @@ class ViewController: UIViewController {
     }
 
     private func setupList() {
+        title = "Todo List"
         tableView.delegate = self
         tableView.dataSource = self
+    }
+
+    @IBAction func btnAddTapped(_ sender: Any) {
+        var textField = UITextField()
+
+        let alertVC = UIAlertController(title: "Add new item", message: "", preferredStyle: .alert)
+        let actionCancel = UIAlertAction(title: "Cancel", style: .cancel)
+        let actionAdd = UIAlertAction(title: "Add", style: .default) { (_) in
+            print(textField.text!)
+        }
+
+        alertVC.addTextField { (alertTextField) in
+            alertTextField.placeholder = "Create a new item..."
+            textField = alertTextField
+        }
+
+        alertVC.addAction(actionCancel)
+        alertVC.addAction(actionAdd)
+
+        present(alertVC, animated: true)
     }
 }
 
