@@ -114,4 +114,20 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
             tableView.reloadData()
         }
     }
+
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            if let item = items?[indexPath.row] {
+                do {
+                    try realm.write {
+                        realm.delete(item)
+                        tableView.deleteRows(at: [indexPath], with: .fade)
+                    }
+                } catch {
+                    print(error.localizedDescription)
+                    return
+                }
+            }
+        }
+    }
 }
