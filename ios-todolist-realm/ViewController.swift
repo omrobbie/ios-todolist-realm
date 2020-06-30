@@ -21,9 +21,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
 
     private let realm = try! Realm()
-    private lazy var items: Results<Item> = {
-        realm.objects(Item.self)
-    }()
+    private var items: Results<Item>?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -53,6 +51,7 @@ class ViewController: UIViewController {
     }
 
     private func loadData() {
+        items = realm.objects(Item.self)
         tableView.reloadData()
     }
 
@@ -85,14 +84,34 @@ class ViewController: UIViewController {
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return items.count
+        return items?.count ?? 0
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell")!
-        let item = items[indexPath.row]
-        cell.textLabel?.text = item.title
-        cell.accessoryType = item.status ? .checkmark : .none
+
+        if let item = items?[indexPath.row] {
+            cell.textLabel?.text = item.title
+            cell.accessoryType = item.status ? .checkmark : .none
+        }
+
         return cell
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.reloadData()
+
+        if let item = items?[indexPath.row] {
+            do {
+                try realm.write {
+                    item.status = !item.status
+                }
+            } catch {
+                print(error.localizedDescription)
+                return
+            }
+
+            tableView.reloadData()
+        }
     }
 }
