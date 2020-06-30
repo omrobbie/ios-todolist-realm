@@ -32,6 +32,7 @@ class ViewController: UIViewController {
         print(Realm.Configuration.defaultConfiguration.fileURL!)
 
         setupList()
+        loadData()
     }
 
     private func setupList() {
@@ -49,6 +50,10 @@ class ViewController: UIViewController {
             print(error.localizedDescription)
             return
         }
+    }
+
+    private func loadData() {
+        tableView.reloadData()
     }
 
     @IBAction func btnAddTapped(_ sender: Any) {
